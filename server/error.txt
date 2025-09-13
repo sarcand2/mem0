@@ -1,0 +1,315 @@
+2025-09-13 11:37:35.508 | INFO:     172.21.0.1:54406 - "GET /openapi.json HTTP/1.1" 200 OK
+2025-09-13 11:37:43.633 | INFO:     172.21.0.1:54416 - "POST /configure HTTP/1.1" 500 Internal Server Error
+2025-09-13 11:37:43.640 | ERROR:    Exception in ASGI application
+2025-09-13 11:37:43.640 | Traceback (most recent call last):
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+2025-09-13 11:37:43.640 |     yield
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 250, in handle_request
+2025-09-13 11:37:43.640 |     resp = self._pool.handle_request(req)
+2025-09-13 11:37:43.640 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_sync/connection_pool.py", line 256, in handle_request
+2025-09-13 11:37:43.640 |     raise exc from None
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_sync/connection_pool.py", line 236, in handle_request
+2025-09-13 11:37:43.640 |     response = connection.handle_request(
+2025-09-13 11:37:43.640 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_sync/connection.py", line 101, in handle_request
+2025-09-13 11:37:43.640 |     raise exc
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_sync/connection.py", line 78, in handle_request
+2025-09-13 11:37:43.640 |     stream = self._connect(request)
+2025-09-13 11:37:43.640 |              ^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_sync/connection.py", line 124, in _connect
+2025-09-13 11:37:43.640 |     stream = self._network_backend.connect_tcp(**kwargs)
+2025-09-13 11:37:43.640 |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_backends/sync.py", line 207, in connect_tcp
+2025-09-13 11:37:43.640 |     with map_exceptions(exc_map):
+2025-09-13 11:37:43.640 |          ^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/contextlib.py", line 158, in __exit__
+2025-09-13 11:37:43.640 |     self.gen.throw(value)
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+2025-09-13 11:37:43.640 |     raise to_exc(exc) from exc
+2025-09-13 11:37:43.640 | httpcore.ConnectError: [Errno -2] Name or service not known
+2025-09-13 11:37:43.640 | 
+2025-09-13 11:37:43.640 | The above exception was the direct cause of the following exception:
+2025-09-13 11:37:43.640 | 
+2025-09-13 11:37:43.640 | Traceback (most recent call last):
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/qdrant_client/http/api_client.py", line 134, in send_inner
+2025-09-13 11:37:43.640 |     response = self._client.send(request)
+2025-09-13 11:37:43.640 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 914, in send
+2025-09-13 11:37:43.640 |     response = self._send_handling_auth(
+2025-09-13 11:37:43.640 |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+2025-09-13 11:37:43.640 |     response = self._send_handling_redirects(
+2025-09-13 11:37:43.640 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+2025-09-13 11:37:43.640 |     response = self._send_single_request(request)
+2025-09-13 11:37:43.640 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1014, in _send_single_request
+2025-09-13 11:37:43.640 |     response = transport.handle_request(request)
+2025-09-13 11:37:43.640 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 249, in handle_request
+2025-09-13 11:37:43.640 |     with map_httpcore_exceptions():
+2025-09-13 11:37:43.640 |          ^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/contextlib.py", line 158, in __exit__
+2025-09-13 11:37:43.640 |     self.gen.throw(value)
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+2025-09-13 11:37:43.640 |     raise mapped_exc(message) from exc
+2025-09-13 11:37:43.640 | httpx.ConnectError: [Errno -2] Name or service not known
+2025-09-13 11:37:43.640 | 
+2025-09-13 11:37:43.640 | During handling of the above exception, another exception occurred:
+2025-09-13 11:37:43.640 | 
+2025-09-13 11:37:43.640 | Traceback (most recent call last):
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/uvicorn/protocols/http/h11_impl.py", line 403, in run_asgi
+2025-09-13 11:37:43.640 |     result = await app(  # type: ignore[func-returns-value]
+2025-09-13 11:37:43.640 |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+2025-09-13 11:37:43.640 |     return await self.app(scope, receive, send)
+2025-09-13 11:37:43.640 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/fastapi/applications.py", line 1054, in __call__
+2025-09-13 11:37:43.640 |     await super().__call__(scope, receive, send)
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/starlette/applications.py", line 112, in __call__
+2025-09-13 11:37:43.640 |     await self.middleware_stack(scope, receive, send)
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/errors.py", line 187, in __call__
+2025-09-13 11:37:43.640 |     raise exc
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/errors.py", line 165, in __call__
+2025-09-13 11:37:43.640 |     await self.app(scope, receive, _send)
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 62, in __call__
+2025-09-13 11:37:43.640 |     await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+2025-09-13 11:37:43.640 |     raise exc
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+2025-09-13 11:37:43.640 |     await app(scope, receive, sender)
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 715, in __call__
+2025-09-13 11:37:43.640 |     await self.middleware_stack(scope, receive, send)
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 735, in app
+2025-09-13 11:37:43.640 |     await route.handle(scope, receive, send)
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 288, in handle
+2025-09-13 11:37:43.640 |     await self.app(scope, receive, send)
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 76, in app
+2025-09-13 11:37:43.640 |     await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+2025-09-13 11:37:43.640 |     raise exc
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+2025-09-13 11:37:43.640 |     await app(scope, receive, sender)
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 73, in app
+2025-09-13 11:37:43.640 |     response = await f(request)
+2025-09-13 11:37:43.640 |                ^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/fastapi/routing.py", line 301, in app
+2025-09-13 11:37:43.640 |     raw_response = await run_endpoint_function(
+2025-09-13 11:37:43.640 |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/fastapi/routing.py", line 214, in run_endpoint_function
+2025-09-13 11:37:43.640 |     return await run_in_threadpool(dependant.call, **values)
+2025-09-13 11:37:43.640 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/starlette/concurrency.py", line 37, in run_in_threadpool
+2025-09-13 11:37:43.640 |     return await anyio.to_thread.run_sync(func)
+2025-09-13 11:37:43.640 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/anyio/to_thread.py", line 56, in run_sync
+2025-09-13 11:37:43.640 |     return await get_async_backend().run_sync_in_worker_thread(
+2025-09-13 11:37:43.640 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 2476, in run_sync_in_worker_thread
+2025-09-13 11:37:43.640 |     return await future
+2025-09-13 11:37:43.640 |            ^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 967, in run
+2025-09-13 11:37:43.640 |     result = context.run(func, *args)
+2025-09-13 11:37:43.640 |              ^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/app/main.py", line 180, in set_config
+2025-09-13 11:37:43.640 |     MEMORY_INSTANCE = Memory.from_config(config)
+2025-09-13 11:37:43.640 |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/app/packages/mem0/memory/main.py", line 169, in from_config
+2025-09-13 11:37:43.640 |     return cls(config)
+2025-09-13 11:37:43.640 |            ^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/app/packages/mem0/memory/main.py", line 133, in __init__
+2025-09-13 11:37:43.640 |     self.vector_store = VectorStoreFactory.create(
+2025-09-13 11:37:43.640 |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/app/packages/mem0/utils/factory.py", line 188, in create
+2025-09-13 11:37:43.640 |     return vector_store_instance(**config)
+2025-09-13 11:37:43.640 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/app/packages/mem0/vector_stores/qdrant.py", line 76, in __init__
+2025-09-13 11:37:43.640 |     self.create_col(embedding_model_dims, on_disk)
+2025-09-13 11:37:43.640 |   File "/app/packages/mem0/vector_stores/qdrant.py", line 88, in create_col
+2025-09-13 11:37:43.640 |     response = self.list_cols()
+2025-09-13 11:37:43.640 |                ^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/app/packages/mem0/vector_stores/qdrant.py", line 230, in list_cols
+2025-09-13 11:37:43.640 |     return self.client.get_collections()
+2025-09-13 11:37:43.640 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/qdrant_client/qdrant_client.py", line 2210, in get_collections
+2025-09-13 11:37:43.640 |     return self._client.get_collections(**kwargs)
+2025-09-13 11:37:43.640 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/qdrant_client/qdrant_remote.py", line 2571, in get_collections
+2025-09-13 11:37:43.640 |     self.http.collections_api.get_collections().result
+2025-09-13 11:37:43.640 |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/qdrant_client/http/api/collections_api.py", line 330, in get_collections
+2025-09-13 11:37:43.640 |     return self._build_for_get_collections()
+2025-09-13 11:37:43.640 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/qdrant_client/http/api/collections_api.py", line 159, in _build_for_get_collections
+2025-09-13 11:37:43.640 |     return self.api_client.request(
+2025-09-13 11:37:43.640 |            ^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/qdrant_client/http/api_client.py", line 95, in request
+2025-09-13 11:37:43.640 |     return self.send(request, type_)
+2025-09-13 11:37:43.640 |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/qdrant_client/http/api_client.py", line 112, in send
+2025-09-13 11:37:43.640 |     response = self.middleware(request, self.send_inner)
+2025-09-13 11:37:43.640 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/qdrant_client/http/api_client.py", line 250, in __call__
+2025-09-13 11:37:43.640 |     return call_next(request)
+2025-09-13 11:37:43.640 |            ^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:43.640 |   File "/usr/local/lib/python3.12/site-packages/qdrant_client/http/api_client.py", line 136, in send_inner
+2025-09-13 11:37:43.640 |     raise ResponseHandlingException(e)
+2025-09-13 11:37:43.640 | qdrant_client.http.exceptions.ResponseHandlingException: [Errno -2] Name or service not known
+2025-09-13 11:37:53.475 | INFO:     172.21.0.1:60452 - "POST /configure HTTP/1.1" 500 Internal Server Error
+2025-09-13 11:37:53.484 | ERROR:    Exception in ASGI application
+2025-09-13 11:37:53.484 | Traceback (most recent call last):
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+2025-09-13 11:37:53.484 |     yield
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 250, in handle_request
+2025-09-13 11:37:53.484 |     resp = self._pool.handle_request(req)
+2025-09-13 11:37:53.484 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_sync/connection_pool.py", line 256, in handle_request
+2025-09-13 11:37:53.484 |     raise exc from None
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_sync/connection_pool.py", line 236, in handle_request
+2025-09-13 11:37:53.484 |     response = connection.handle_request(
+2025-09-13 11:37:53.484 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_sync/connection.py", line 101, in handle_request
+2025-09-13 11:37:53.484 |     raise exc
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_sync/connection.py", line 78, in handle_request
+2025-09-13 11:37:53.484 |     stream = self._connect(request)
+2025-09-13 11:37:53.484 |              ^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_sync/connection.py", line 124, in _connect
+2025-09-13 11:37:53.484 |     stream = self._network_backend.connect_tcp(**kwargs)
+2025-09-13 11:37:53.484 |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_backends/sync.py", line 207, in connect_tcp
+2025-09-13 11:37:53.484 |     with map_exceptions(exc_map):
+2025-09-13 11:37:53.484 |          ^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/contextlib.py", line 158, in __exit__
+2025-09-13 11:37:53.484 |     self.gen.throw(value)
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+2025-09-13 11:37:53.484 |     raise to_exc(exc) from exc
+2025-09-13 11:37:53.484 | httpcore.ConnectError: [Errno -2] Name or service not known
+2025-09-13 11:37:53.484 | 
+2025-09-13 11:37:53.484 | The above exception was the direct cause of the following exception:
+2025-09-13 11:37:53.484 | 
+2025-09-13 11:37:53.484 | Traceback (most recent call last):
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/qdrant_client/http/api_client.py", line 134, in send_inner
+2025-09-13 11:37:53.484 |     response = self._client.send(request)
+2025-09-13 11:37:53.484 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 914, in send
+2025-09-13 11:37:53.484 |     response = self._send_handling_auth(
+2025-09-13 11:37:53.484 |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+2025-09-13 11:37:53.484 |     response = self._send_handling_redirects(
+2025-09-13 11:37:53.484 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+2025-09-13 11:37:53.484 |     response = self._send_single_request(request)
+2025-09-13 11:37:53.484 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1014, in _send_single_request
+2025-09-13 11:37:53.484 |     response = transport.handle_request(request)
+2025-09-13 11:37:53.484 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 249, in handle_request
+2025-09-13 11:37:53.484 |     with map_httpcore_exceptions():
+2025-09-13 11:37:53.484 |          ^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/contextlib.py", line 158, in __exit__
+2025-09-13 11:37:53.484 |     self.gen.throw(value)
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+2025-09-13 11:37:53.484 |     raise mapped_exc(message) from exc
+2025-09-13 11:37:53.484 | httpx.ConnectError: [Errno -2] Name or service not known
+2025-09-13 11:37:53.484 | 
+2025-09-13 11:37:53.484 | During handling of the above exception, another exception occurred:
+2025-09-13 11:37:53.484 | 
+2025-09-13 11:37:53.484 | Traceback (most recent call last):
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/uvicorn/protocols/http/h11_impl.py", line 403, in run_asgi
+2025-09-13 11:37:53.484 |     result = await app(  # type: ignore[func-returns-value]
+2025-09-13 11:37:53.484 |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+2025-09-13 11:37:53.484 |     return await self.app(scope, receive, send)
+2025-09-13 11:37:53.484 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/fastapi/applications.py", line 1054, in __call__
+2025-09-13 11:37:53.484 |     await super().__call__(scope, receive, send)
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/starlette/applications.py", line 112, in __call__
+2025-09-13 11:37:53.484 |     await self.middleware_stack(scope, receive, send)
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/errors.py", line 187, in __call__
+2025-09-13 11:37:53.484 |     raise exc
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/errors.py", line 165, in __call__
+2025-09-13 11:37:53.484 |     await self.app(scope, receive, _send)
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 62, in __call__
+2025-09-13 11:37:53.484 |     await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+2025-09-13 11:37:53.484 |     raise exc
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+2025-09-13 11:37:53.484 |     await app(scope, receive, sender)
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 715, in __call__
+2025-09-13 11:37:53.484 |     await self.middleware_stack(scope, receive, send)
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 735, in app
+2025-09-13 11:37:53.484 |     await route.handle(scope, receive, send)
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 288, in handle
+2025-09-13 11:37:53.484 |     await self.app(scope, receive, send)
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 76, in app
+2025-09-13 11:37:53.484 |     await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+2025-09-13 11:37:53.484 |     raise exc
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+2025-09-13 11:37:53.484 |     await app(scope, receive, sender)
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 73, in app
+2025-09-13 11:37:53.484 |     response = await f(request)
+2025-09-13 11:37:53.484 |                ^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/fastapi/routing.py", line 301, in app
+2025-09-13 11:37:53.484 |     raw_response = await run_endpoint_function(
+2025-09-13 11:37:53.484 |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/fastapi/routing.py", line 214, in run_endpoint_function
+2025-09-13 11:37:53.484 |     return await run_in_threadpool(dependant.call, **values)
+2025-09-13 11:37:53.484 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/starlette/concurrency.py", line 37, in run_in_threadpool
+2025-09-13 11:37:53.484 |     return await anyio.to_thread.run_sync(func)
+2025-09-13 11:37:53.484 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/anyio/to_thread.py", line 56, in run_sync
+2025-09-13 11:37:53.484 |     return await get_async_backend().run_sync_in_worker_thread(
+2025-09-13 11:37:53.484 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 2476, in run_sync_in_worker_thread
+2025-09-13 11:37:53.484 |     return await future
+2025-09-13 11:37:53.484 |            ^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 967, in run
+2025-09-13 11:37:53.484 |     result = context.run(func, *args)
+2025-09-13 11:37:53.484 |              ^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/app/main.py", line 180, in set_config
+2025-09-13 11:37:53.484 |     MEMORY_INSTANCE = Memory.from_config(config)
+2025-09-13 11:37:53.484 |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/app/packages/mem0/memory/main.py", line 169, in from_config
+2025-09-13 11:37:53.484 |     return cls(config)
+2025-09-13 11:37:53.484 |            ^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/app/packages/mem0/memory/main.py", line 133, in __init__
+2025-09-13 11:37:53.484 |     self.vector_store = VectorStoreFactory.create(
+2025-09-13 11:37:53.484 |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/app/packages/mem0/utils/factory.py", line 188, in create
+2025-09-13 11:37:53.484 |     return vector_store_instance(**config)
+2025-09-13 11:37:53.484 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/app/packages/mem0/vector_stores/qdrant.py", line 76, in __init__
+2025-09-13 11:37:53.484 |     self.create_col(embedding_model_dims, on_disk)
+2025-09-13 11:37:53.484 |   File "/app/packages/mem0/vector_stores/qdrant.py", line 88, in create_col
+2025-09-13 11:37:53.484 |     response = self.list_cols()
+2025-09-13 11:37:53.484 |                ^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/app/packages/mem0/vector_stores/qdrant.py", line 230, in list_cols
+2025-09-13 11:37:53.484 |     return self.client.get_collections()
+2025-09-13 11:37:53.484 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/qdrant_client/qdrant_client.py", line 2210, in get_collections
+2025-09-13 11:37:53.484 |     return self._client.get_collections(**kwargs)
+2025-09-13 11:37:53.484 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/qdrant_client/qdrant_remote.py", line 2571, in get_collections
+2025-09-13 11:37:53.484 |     self.http.collections_api.get_collections().result
+2025-09-13 11:37:53.484 |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/qdrant_client/http/api/collections_api.py", line 330, in get_collections
+2025-09-13 11:37:53.484 |     return self._build_for_get_collections()
+2025-09-13 11:37:53.484 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/qdrant_client/http/api/collections_api.py", line 159, in _build_for_get_collections
+2025-09-13 11:37:53.484 |     return self.api_client.request(
+2025-09-13 11:37:53.484 |            ^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/qdrant_client/http/api_client.py", line 95, in request
+2025-09-13 11:37:53.484 |     return self.send(request, type_)
+2025-09-13 11:37:53.484 |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/qdrant_client/http/api_client.py", line 112, in send
+2025-09-13 11:37:53.484 |     response = self.middleware(request, self.send_inner)
+2025-09-13 11:37:53.484 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/qdrant_client/http/api_client.py", line 250, in __call__
+2025-09-13 11:37:53.484 |     return call_next(request)
+2025-09-13 11:37:53.484 |            ^^^^^^^^^^^^^^^^^^
+2025-09-13 11:37:53.484 |   File "/usr/local/lib/python3.12/site-packages/qdrant_client/http/api_client.py", line 136, in send_inner
+2025-09-13 11:37:53.484 |     raise ResponseHandlingException(e)
+2025-09-13 11:37:53.484 | qdrant_client.http.exceptions.ResponseHandlingException: [Errno -2] Name or service not known

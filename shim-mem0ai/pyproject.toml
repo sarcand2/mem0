@@ -1,0 +1,20 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mem0ai"
+version = "0.0.1.dev1"
+description = "Shim package: exposes mem0 (Memory, MemoryClient) backed by HTTP to your Mem0 OSS server"
+authors = [ { name = "Dagio", email = "dev@dagio.local" } ]
+readme = "README.md"
+requires-python = ">=3.9,<4.0"
+dependencies = [
+  "httpx>=0.25.0",
+]
+
+[tool.hatch.build]
+include = [ "mem0/**/*.py", "README.md" ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["mem0"]

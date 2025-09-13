@@ -14,4 +14,17 @@ Mem0 provides a REST API server (written using FastAPI). Users can perform all o
 
 ## Running the server
 
-Follow the instructions in the [docs](https://docs.mem0.ai/open-source/features/rest-api) to run the server.
+You can run via Docker Compose using two modes:
+
+- Fast runtime (default): uses `server/Dockerfile` and installs dependencies from `server/requirements.txt`.
+  - docker compose -f server/docker-compose.yml up -d
+  - Server: http://localhost:8000 (OpenAPI at /docs)
+
+- Dev mode (library hot‑reload): compose override with `server/docker-compose.dev.yml`.
+  - docker compose -f server/docker-compose.yml -f server/docker-compose.dev.yml up -d
+  - Overrides only the dev bits (dev.Dockerfile, mounted volumes, reload)
+  - Slower to build the first time (editable install), mais pratique pour itérer sur la lib.
+
+Notes
+- The default compose includes Qdrant and Memgraph services. Ensure their ports are free.
+- For Docker for Windows, service names inside the container are `memory-qdrant` and `memory-memgraph` (the `/configure` endpoint normalizes these for you).

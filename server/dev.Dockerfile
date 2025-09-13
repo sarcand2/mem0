@@ -16,7 +16,8 @@ COPY pyproject.toml .
 COPY poetry.lock .
 COPY README.md .
 COPY mem0 ./mem0
-RUN pip install -e .[graph]
+# Install mem0 from local source with extras for graph/memgraph and llms (Gemini)
+RUN pip install -e .[graph,extras,llms]
 
 # Return to app directory and copy server code
 WORKDIR /app

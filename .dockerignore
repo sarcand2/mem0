@@ -1,0 +1,25 @@
+.git
+.github
+.gitignore
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+*.egg-info/
+build/
+dist/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+node_modules/
+openmemory/
+docs/
+examples/
+tests/
+*.ipynb
+*.DS_Store
+# Keep server and mem0 folders in context for dev images that copy them
+!server/
+!mem0/

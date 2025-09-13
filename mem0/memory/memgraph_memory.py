@@ -281,25 +281,19 @@ class MemoryGraph:
             # Build query based on whether agent_id is provided
             if filters.get("agent_id"):
                 cypher_query = """
-                MATCH (n:Entity {user_id: $user_id, agent_id: $agent_id})
-                WHERE n.embedding IS NOT NULL
-                WITH n, $n_embedding as n_embedding
-                CALL node_similarity.cosine_pairwise("embedding", [n_embedding], [n.embedding])
-                YIELD node1, node2, similarity
-                WITH n, similarity
-                WHERE similarity >= $threshold
-                MATCH (n)-[r]->(m:Entity)
-                RETURN n.name AS source, id(n) AS source_id, type(r) AS relationship, id(r) AS relation_id, m.name AS destination, id(m) AS destination_id, similarity
+                CALL vector_search.search("memzero", $k, $n_embedding)
+                YIELD node, similarity
+                WITH node, similarity
+                WHERE node.user_id = $user_id AND node.agent_id = $agent_id AND similarity >= $threshold
+                MATCH (node)-[r]->(m:Entity {user_id: $user_id, agent_id: $agent_id})
+                RETURN node.name AS source, id(node) AS source_id, type(r) AS relationship, id(r) AS relation_id, m.name AS destination, id(m) AS destination_id, similarity
                 UNION
-                MATCH (n:Entity {user_id: $user_id, agent_id: $agent_id})
-                WHERE n.embedding IS NOT NULL
-                WITH n, $n_embedding as n_embedding
-                CALL node_similarity.cosine_pairwise("embedding", [n_embedding], [n.embedding])
-                YIELD node1, node2, similarity
-                WITH n, similarity
-                WHERE similarity >= $threshold
-                MATCH (m:Entity)-[r]->(n)
-                RETURN m.name AS source, id(m) AS source_id, type(r) AS relationship, id(r) AS relation_id, n.name AS destination, id(n) AS destination_id, similarity
+                CALL vector_search.search("memzero", $k, $n_embedding)
+                YIELD node, similarity
+                WITH node, similarity
+                WHERE node.user_id = $user_id AND node.agent_id = $agent_id AND similarity >= $threshold
+                MATCH (m:Entity {user_id: $user_id, agent_id: $agent_id})-[r]->(node)
+                RETURN m.name AS source, id(m) AS source_id, type(r) AS relationship, id(r) AS relation_id, node.name AS destination, id(node) AS destination_id, similarity
                 ORDER BY similarity DESC
                 LIMIT $limit;
                 """
@@ -309,28 +303,23 @@ class MemoryGraph:
                     "user_id": filters["user_id"],
                     "agent_id": filters["agent_id"],
                     "limit": limit,
+                    "k": limit,
                 }
             else:
                 cypher_query = """
-                MATCH (n:Entity {user_id: $user_id})
-                WHERE n.embedding IS NOT NULL
-                WITH n, $n_embedding as n_embedding
-                CALL node_similarity.cosine_pairwise("embedding", [n_embedding], [n.embedding])
-                YIELD node1, node2, similarity
-                WITH n, similarity
-                WHERE similarity >= $threshold
-                MATCH (n)-[r]->(m:Entity)
-                RETURN n.name AS source, id(n) AS source_id, type(r) AS relationship, id(r) AS relation_id, m.name AS destination, id(m) AS destination_id, similarity
+                CALL vector_search.search("memzero", $k, $n_embedding)
+                YIELD node, similarity
+                WITH node, similarity
+                WHERE node.user_id = $user_id AND similarity >= $threshold
+                MATCH (node)-[r]->(m:Entity {user_id: $user_id})
+                RETURN node.name AS source, id(node) AS source_id, type(r) AS relationship, id(r) AS relation_id, m.name AS destination, id(m) AS destination_id, similarity
                 UNION
-                MATCH (n:Entity {user_id: $user_id})
-                WHERE n.embedding IS NOT NULL
-                WITH n, $n_embedding as n_embedding
-                CALL node_similarity.cosine_pairwise("embedding", [n_embedding], [n.embedding])
-                YIELD node1, node2, similarity
-                WITH n, similarity
-                WHERE similarity >= $threshold
-                MATCH (m:Entity)-[r]->(n)
-                RETURN m.name AS source, id(m) AS source_id, type(r) AS relationship, id(r) AS relation_id, n.name AS destination, id(n) AS destination_id, similarity
+                CALL vector_search.search("memzero", $k, $n_embedding)
+                YIELD node, similarity
+                WITH node, similarity
+                WHERE node.user_id = $user_id AND similarity >= $threshold
+                MATCH (m:Entity {user_id: $user_id})-[r]->(node)
+                RETURN m.name AS source, id(m) AS source_id, type(r) AS relationship, id(r) AS relation_id, node.name AS destination, id(node) AS destination_id, similarity
                 ORDER BY similarity DESC
                 LIMIT $limit;
                 """
@@ -339,6 +328,7 @@ class MemoryGraph:
                     "threshold": self.threshold,
                     "user_id": filters["user_id"],
                     "limit": limit,
+                    "k": limit,
                 }
 
             ans = self.graph.query(cypher_query, params=params)

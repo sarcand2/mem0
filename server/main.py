@@ -9,49 +9,134 @@ from pydantic import BaseModel, Field
 
 from mem0 import Memory
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+# Runtime patch to avoid modifying the mem0 open-source package on disk.
+# Replaces Memgraph node-similarity with vector index search for query embeddings.
+try:
+    from mem0.memory.memgraph_memory import MemoryGraph  # type: ignore
+
+    def _patched_search_graph_db(self, node_list, filters, limit=100):
+        """Vector-index based neighborhood search using MAGE vector_search.
+
+        Avoids calling node_similarity.cosine_pairwise with invalid arg types.
+        """
+        result_relations = []
+        for node in node_list:
+            n_embedding = self.embedding_model.embed(node)
+            k = min(max(1, int(limit or 10)), 1000)
+
+            if filters.get("agent_id"):
+                cypher_query = """
+                CALL vector_search.search("memzero", $k, $n_embedding)
+                YIELD node, similarity
+                WITH node, similarity
+                WHERE node.user_id = $user_id AND node.agent_id = $agent_id AND similarity >= $threshold
+                MATCH (node)-[r]->(m:Entity {user_id: $user_id, agent_id: $agent_id})
+                RETURN node.name AS source, id(node) AS source_id, type(r) AS relationship, id(r) AS relation_id, m.name AS destination, id(m) AS destination_id, similarity
+                UNION
+                CALL vector_search.search("memzero", $k, $n_embedding)
+                YIELD node, similarity
+                WITH node, similarity
+                WHERE node.user_id = $user_id AND node.agent_id = $agent_id AND similarity >= $threshold
+                MATCH (m:Entity {user_id: $user_id, agent_id: $agent_id})-[r]->(node)
+                RETURN m.name AS source, id(m) AS source_id, type(r) AS relationship, id(r) AS relation_id, node.name AS destination, id(node) AS destination_id, similarity
+                ORDER BY similarity DESC
+                LIMIT $limit;
+                """
+                params = {
+                    "n_embedding": n_embedding,
+                    "threshold": getattr(self, "threshold", 0.7),
+                    "user_id": filters["user_id"],
+                    "agent_id": filters["agent_id"],
+                    "limit": limit,
+                    "k": k,
+                }
+            else:
+                cypher_query = """
+                CALL vector_search.search("memzero", $k, $n_embedding)
+                YIELD node, similarity
+                WITH node, similarity
+                WHERE node.user_id = $user_id AND similarity >= $threshold
+                MATCH (node)-[r]->(m:Entity {user_id: $user_id})
+                RETURN node.name AS source, id(node) AS source_id, type(r) AS relationship, id(r) AS relation_id, m.name AS destination, id(m) AS destination_id, similarity
+                UNION
+                CALL vector_search.search("memzero", $k, $n_embedding)
+                YIELD node, similarity
+                WITH node, similarity
+                WHERE node.user_id = $user_id AND similarity >= $threshold
+                MATCH (m:Entity {user_id: $user_id})-[r]->(node)
+                RETURN m.name AS source, id(m) AS source_id, type(r) AS relationship, id(r) AS relation_id, node.name AS destination, id(node) AS destination_id, similarity
+                ORDER BY similarity DESC
+                LIMIT $limit;
+                """
+                params = {
+                    "n_embedding": n_embedding,
+                    "threshold": getattr(self, "threshold", 0.7),
+                    "user_id": filters["user_id"],
+                    "limit": limit,
+                    "k": k,
+                }
+
+            ans = self.graph.query(cypher_query, params=params)
+            result_relations.extend(ans)
+
+        return result_relations
+
+    # Apply patch once at import time
+    MemoryGraph._search_graph_db = _patched_search_graph_db  # type: ignore
+except Exception as _e:
+    logging.warning(f"Skipping Memgraph search patch: {_e}")
+
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s - %(levelname)s - %(message)s")
 
 # Load environment variables
 load_dotenv()
 
 
-POSTGRES_HOST = os.environ.get("POSTGRES_HOST", "postgres")
-POSTGRES_PORT = os.environ.get("POSTGRES_PORT", "5432")
-POSTGRES_DB = os.environ.get("POSTGRES_DB", "postgres")
-POSTGRES_USER = os.environ.get("POSTGRES_USER", "postgres")
-POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD", "postgres")
-POSTGRES_COLLECTION_NAME = os.environ.get("POSTGRES_COLLECTION_NAME", "memories")
+QDRANT_HOST = os.environ.get("MEMORY_QDRANT_HOST", "qdrant")
+QDRANT_PORT = os.environ.get("MEMORY_QDRANT_PORT", "6333")
+QDRANT_COLLECTION_NAME = os.environ.get(
+    "MEMORY_QDRANT_COLLECTION_NAME", "memories")
 
-NEO4J_URI = os.environ.get("NEO4J_URI", "bolt://neo4j:7687")
-NEO4J_USERNAME = os.environ.get("NEO4J_USERNAME", "neo4j")
-NEO4J_PASSWORD = os.environ.get("NEO4J_PASSWORD", "mem0graph")
+MEMGRAPH_URI = os.environ.get("MEMORY_MEMGRAPH_URI", "bolt://memgraph:7687")
+# Provide non-empty defaults to satisfy config validation
+MEMGRAPH_USERNAME = os.environ.get(
+    "MEMORY_MEMGRAPH_USERNAME", "memory_graph_user")
+MEMGRAPH_PASSWORD = os.environ.get(
+    "MEMORY_MEMGRAPH_PASSWORD", "mem0ry_graph_P@ss")
 
-MEMGRAPH_URI = os.environ.get("MEMGRAPH_URI", "bolt://localhost:7687")
-MEMGRAPH_USERNAME = os.environ.get("MEMGRAPH_USERNAME", "memgraph")
-MEMGRAPH_PASSWORD = os.environ.get("MEMGRAPH_PASSWORD", "mem0graph")
-
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
-HISTORY_DB_PATH = os.environ.get("HISTORY_DB_PATH", "/app/history/history.db")
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
+HISTORY_DB_PATH = os.environ.get(
+    "MEMORY_HISTORY_DB_PATH", "/app/history/history.db")
 
 DEFAULT_CONFIG = {
     "version": "v1.1",
     "vector_store": {
-        "provider": "pgvector",
+        "provider": "qdrant",
         "config": {
-            "host": POSTGRES_HOST,
-            "port": int(POSTGRES_PORT),
-            "dbname": POSTGRES_DB,
-            "user": POSTGRES_USER,
-            "password": POSTGRES_PASSWORD,
-            "collection_name": POSTGRES_COLLECTION_NAME,
+            "host": QDRANT_HOST,
+            "port": int(QDRANT_PORT),
+            "collection_name": QDRANT_COLLECTION_NAME,
+            "embedding_model_dims": 768,
         },
     },
     "graph_store": {
-        "provider": "neo4j",
-        "config": {"url": NEO4J_URI, "username": NEO4J_USERNAME, "password": NEO4J_PASSWORD},
+        "provider": "memgraph",
+        "config": {"url": MEMGRAPH_URI, "username": MEMGRAPH_USERNAME, "password": MEMGRAPH_PASSWORD},
     },
-    "llm": {"provider": "openai", "config": {"api_key": OPENAI_API_KEY, "temperature": 0.2, "model": "gpt-4o"}},
-    "embedder": {"provider": "openai", "config": {"api_key": OPENAI_API_KEY, "model": "text-embedding-3-small"}},
+    "llm": {
+        "provider": "gemini",
+        "config": {"api_key": GOOGLE_API_KEY, "temperature": 0.2, "model": "gemini-2.0-flash"},
+    },
+    "embedder": {
+        "provider": "gemini",
+        "config": {
+            "api_key": GOOGLE_API_KEY,
+            "model": "models/text-embedding-004",
+            "embedding_dims": 768,
+            "output_dimensionality": 768,
+        },
+    },
     "history_db_path": HISTORY_DB_PATH,
 }
 
@@ -66,12 +151,14 @@ app = FastAPI(
 
 
 class Message(BaseModel):
-    role: str = Field(..., description="Role of the message (user or assistant).")
+    role: str = Field(...,
+                      description="Role of the message (user or assistant).")
     content: str = Field(..., description="Message content.")
 
 
 class MemoryCreate(BaseModel):
-    messages: List[Message] = Field(..., description="List of messages to store.")
+    messages: List[Message] = Field(...,
+                                    description="List of messages to store.")
     user_id: Optional[str] = None
     agent_id: Optional[str] = None
     run_id: Optional[str] = None
@@ -88,24 +175,71 @@ class SearchRequest(BaseModel):
 
 @app.post("/configure", summary="Configure Mem0")
 def set_config(config: Dict[str, Any]):
-    """Set memory configuration."""
-    global MEMORY_INSTANCE
-    MEMORY_INSTANCE = Memory.from_config(config)
-    return {"message": "Configuration set successfully"}
+    """Set memory configuration.
+
+    Adjusts incoming hosts to match container service names when applicable.
+    """
+    try:
+        cfg = dict(config)
+        # Normalize vector store host for Docker service name
+        try:
+            vs = cfg.get("vector_store", {})
+            if vs.get("provider") == "qdrant":
+                vsc = vs.get("config", {})
+                host = vsc.get("host")
+                if host in ("qdrant", "localhost"):
+                    vsc["host"] = os.getenv("MEMORY_QDRANT_HOST", host)
+                vs["config"] = vsc
+                cfg["vector_store"] = vs
+        except Exception:
+            pass
+
+        # Normalize memgraph URI if present
+        try:
+            gs = cfg.get("graph_store", {})
+            if gs.get("provider") == "memgraph":
+                gsc = gs.get("config", {})
+                url = gsc.get("url")
+                default_uri = os.getenv("MEMORY_MEMGRAPH_URI")
+                if default_uri and url:
+                    # If url points to 'memgraph' service, replace with env URI
+                    if "memgraph" in url and "memory-memgraph" not in url:
+                        gsc["url"] = default_uri
+                elif default_uri and not url:
+                    gsc["url"] = default_uri
+                gs["config"] = gsc
+                cfg["graph_store"] = gs
+        except Exception:
+            pass
+
+        # Ensure GOOGLE_API_KEY is available for gemini providers
+        if not os.getenv("GOOGLE_API_KEY"):
+            logging.warning("GOOGLE_API_KEY not set; Gemini LLM/embedder may fail")
+
+        global MEMORY_INSTANCE
+        MEMORY_INSTANCE = Memory.from_config(cfg)
+        return {"message": "Configuration set successfully"}
+    except Exception as e:
+        logging.exception("Error in configure:")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/memories", summary="Create memories")
 def add_memory(memory_create: MemoryCreate):
     """Store new memories."""
     if not any([memory_create.user_id, memory_create.agent_id, memory_create.run_id]):
-        raise HTTPException(status_code=400, detail="At least one identifier (user_id, agent_id, run_id) is required.")
+        raise HTTPException(
+            status_code=400, detail="At least one identifier (user_id, agent_id, run_id) is required.")
 
-    params = {k: v for k, v in memory_create.model_dump().items() if v is not None and k != "messages"}
+    params = {k: v for k, v in memory_create.model_dump(
+    ).items() if v is not None and k != "messages"}
     try:
-        response = MEMORY_INSTANCE.add(messages=[m.model_dump() for m in memory_create.messages], **params)
+        response = MEMORY_INSTANCE.add(
+            messages=[m.model_dump() for m in memory_create.messages], **params)
         return JSONResponse(content=response)
     except Exception as e:
-        logging.exception("Error in add_memory:")  # This will log the full traceback
+        # This will log the full traceback
+        logging.exception("Error in add_memory:")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -117,7 +251,8 @@ def get_all_memories(
 ):
     """Retrieve stored memories."""
     if not any([user_id, run_id, agent_id]):
-        raise HTTPException(status_code=400, detail="At least one identifier is required.")
+        raise HTTPException(
+            status_code=400, detail="At least one identifier is required.")
     try:
         params = {
             k: v for k, v in {"user_id": user_id, "run_id": run_id, "agent_id": agent_id}.items() if v is not None
@@ -142,7 +277,8 @@ def get_memory(memory_id: str):
 def search_memories(search_req: SearchRequest):
     """Search for memories based on a query."""
     try:
-        params = {k: v for k, v in search_req.model_dump().items() if v is not None and k != "query"}
+        params = {k: v for k, v in search_req.model_dump(
+        ).items() if v is not None and k != "query"}
         return MEMORY_INSTANCE.search(query=search_req.query, **params)
     except Exception as e:
         logging.exception("Error in search_memories:")
@@ -152,16 +288,26 @@ def search_memories(search_req: SearchRequest):
 @app.put("/memories/{memory_id}", summary="Update a memory")
 def update_memory(memory_id: str, updated_memory: Dict[str, Any]):
     """Update an existing memory with new content.
-    
+
     Args:
         memory_id (str): ID of the memory to update
         updated_memory (str): New content to update the memory with
-        
+
     Returns:
         dict: Success message indicating the memory was updated
     """
     try:
-        return MEMORY_INSTANCE.update(memory_id=memory_id, data=updated_memory)
+        # Accept either a raw string under 'memory'/'text' key or a full dict.
+        data = updated_memory
+        if isinstance(updated_memory, dict):
+            if "memory" in updated_memory:
+                data = updated_memory["memory"]
+            elif "text" in updated_memory:
+                data = updated_memory["text"]
+        if not isinstance(data, str):
+            raise HTTPException(
+                status_code=400, detail="Body must include 'memory' or 'text' as string.")
+        return MEMORY_INSTANCE.update(memory_id=memory_id, data=data)
     except Exception as e:
         logging.exception("Error in update_memory:")
         raise HTTPException(status_code=500, detail=str(e))
@@ -196,7 +342,8 @@ def delete_all_memories(
 ):
     """Delete all memories for a given identifier."""
     if not any([user_id, run_id, agent_id]):
-        raise HTTPException(status_code=400, detail="At least one identifier is required.")
+        raise HTTPException(
+            status_code=400, detail="At least one identifier is required.")
     try:
         params = {
             k: v for k, v in {"user_id": user_id, "run_id": run_id, "agent_id": agent_id}.items() if v is not None

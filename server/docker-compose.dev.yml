@@ -1,0 +1,19 @@
+services:
+  mem0:
+    # Override only what differs from production
+    build:
+      context: ..
+      dockerfile: server/dev.Dockerfile
+    volumes:
+      - ./history:/app/history      # Persist history (SQLite file)
+      - .:/app                      # Hot-reload server code
+      - ../mem0:/app/packages/mem0  # Hot-reload library code
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Optional: disable qdrant healthcheck in dev to avoid 'unhealthy' noise
+  memory-qdrant:
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
